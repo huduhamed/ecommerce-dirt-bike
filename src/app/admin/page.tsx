@@ -8,7 +8,7 @@ import {
 import db from "@/db/db";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
 
-// total sales
+// total sales data
 async function getSalesData() {
   const data = await db.order.aggregate({
     _sum: { pricePaidInCents: true },
@@ -21,8 +21,44 @@ async function getSalesData() {
   };
 }
 
+// product data
+async function getProductData() {
+  const [activeCount, inactiveCount] = await Promise.all([
+    db.product.count({ where: { isAvailableForPurchase: true } }),
+    db.product.count({ where: { isAvailableForPurchase: false } }),
+  ]);
+
+  return {
+    activeCount,
+    inactiveCount,
+  };
+}
+
+// user data
+async function getUserData() {
+  const [userCount, orderData] = await Promise.all([
+    db.user.count(),
+    db.order.aggregate({
+      _sum: { pricePaidInCents: true },
+    }),
+  ]);
+
+  return {
+    userCount,
+    averageValuePerUser:
+      userCount === 0
+        ? 0
+        : (orderData._sum.pricePaidInCents || 0) / userCount / 100,
+  };
+}
+
+// dashboard component
 export default async function AdminDashboard() {
-  const salesData = await getSalesData();
+  const [salesData, userData, productData] = await Promise.all([
+    getSalesData(),
+    getUserData(),
+    getProductData(),
+  ]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -33,8 +69,13 @@ export default async function AdminDashboard() {
       />
       <DashboardCard
         title="Customers"
-        subtle={`${formatNumber(salesData.numberOfSales)} Average Value`}
-        body={formatCurrency(salesData.amount)}
+        subtle={`${formatCurrency(userData.averageValuePerUser)} Average Value`}
+        body={formatNumber(userData.userCount)}
+      />
+      <DashboardCard
+        title="Available Products"
+        subtle={`${formatNumber(productData.inactiveCount)} Inactive`}
+        body={formatNumber(productData.activeCount)}
       />
     </div>
   );
@@ -46,6 +87,7 @@ type DashboardCardProps = {
   body: string;
 };
 
+// reusable  card component
 function DashboardCard({ title, subtle, body }: DashboardCardProps) {
   return (
     <Card>
@@ -59,3 +101,8 @@ function DashboardCard({ title, subtle, body }: DashboardCardProps) {
     </Card>
   );
 }
+
+// test loading state with this function
+// function wait(duration: number) {
+//   return new Promise((resolve) => setTimeout(resolve, duration));
+// }
