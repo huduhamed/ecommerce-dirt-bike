@@ -20,7 +20,7 @@ const addSchema = z.object({
 });
 
 // add product action
-export async function AddProduct(formData: FormData) {
+export async function AddProduct(prevState: unknown, formData: FormData) {
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (result.success === false) {
@@ -46,6 +46,7 @@ export async function AddProduct(formData: FormData) {
 
   await db.product.create({
     data: {
+      isAvailableForPurchase: false,
       name: data.name,
       priceInCents: data.priceInCents,
       description: data.description,
