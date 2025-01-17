@@ -29,6 +29,7 @@ export async function AddProduct(prevState: unknown, formData: FormData) {
 
 	// save files to file-system before downloads
 	await fs.mkdir('products', { recursive: true });
+	// create a path to new file
 	const filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
 	// save file
 	await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
@@ -70,4 +71,67 @@ export async function deleteProduct(id: string) {
 	});
 
 	if (product == null) return notFound();
+
+	await fs.unlink(product.filePath);
+	await fs.unlink(`public${product.imagePath}`);
+}
+
+// add edit schema
+const editSchema = addSchema.extend({
+	file: fileSchema.optional(),
+	image: imageSchema.optional(),
+});
+
+// update product
+export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
+	const result = editSchema.safeParse(Object.fromEntries(formData.entries()));
+
+	if (result.success === false) {
+		return result.error.formErrors.fieldErrors;
+	}
+
+	const data = result.data;
+	const product = await db.product.findUnique({ where: { id } });
+
+	// return not found if product is null
+	if (product == null) return notFound();
+
+	//  create a variable for filePath
+	let filePath = product.filePath;
+
+	// update file if change
+	if (data.file != null && data.file.size > 0) {
+		// unlink old product file
+		await fs.unlink(product.filePath);
+		// create & save path to new file
+		filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
+		// save file
+		await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
+	}
+
+	//  create a variable for imagePath
+	let imagePath = product.imagePath;
+
+	// update file if change
+	if (data.image != null && data.image.size > 0) {
+		// unlink old product image
+		await fs.unlink(`{public${product.imagePath}}`);
+		// create & save path to new file
+		imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`;
+		// save image
+		await fs.writeFile(`public${imagePath}`, Buffer.from(await data.image.arrayBuffer()));
+	}
+
+	await db.product.update({
+		where: { id },
+		data: {
+			name: data.name,
+			priceInCents: data.priceInCents,
+			description: data.description,
+			filePath,
+			imagePath,
+		},
+	});
+
+	redirect('/admin/products');
 }
