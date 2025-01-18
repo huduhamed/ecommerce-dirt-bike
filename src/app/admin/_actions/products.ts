@@ -99,7 +99,7 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
 	//  create a variable for filePath
 	let filePath = product.filePath;
 
-	// update file if change
+	// update file if changed
 	if (data.file != null && data.file.size > 0) {
 		// unlink old product file
 		await fs.unlink(product.filePath);
@@ -112,7 +112,7 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
 	//  create a variable for imagePath
 	let imagePath = product.imagePath;
 
-	// update file if change
+	// update file if changed
 	if (data.image != null && data.image.size > 0) {
 		// unlink old product image
 		await fs.unlink(`{public${product.imagePath}}`);
