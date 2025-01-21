@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest) {
 		return new NextResponse('Unauthenticated', {
 			status: 401,
 			headers: {
-				'www-Authenticate': 'Basic',
+				'WWW-Authenticate': 'Basic',
 			},
 		});
 	}
@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
 
 // check & compare auth keys to authenticate
 async function isAuthenticated(req: NextRequest) {
-	const authHeader = req.headers.get('autorization') || req.headers.get('Autorization');
+	const authHeader = req.headers.get('Authorization');
 
 	// deny auth if null
 	if (authHeader == null) return false;
@@ -24,6 +24,8 @@ async function isAuthenticated(req: NextRequest) {
 	const [username, password] = Buffer.from(authHeader.split(' ')[1], 'base64')
 		.toString()
 		.split(':');
+
+	isValidPassword(password, 'thehehe');
 
 	return (
 		username === process.env.ADMIN_USERNAME &&
