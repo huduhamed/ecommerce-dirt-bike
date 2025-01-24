@@ -1,9 +1,12 @@
-import { Button } from '@/components/ui/button';
-import db from '@/db/db';
-import { Product } from '@prisma/client';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { ProductCard } from '../admin/_components/ProductCard';
+import { Suspense } from 'react';
+
+// internal imports
+import { ProductCard, ProductCardSkeleton } from '../../components/ProductCard';
+import { Button } from '@/components/ui/button';
+import { Product } from '@prisma/client';
+import db from '@/db/db';
 
 // This function should return the 5 most popular products
 function getMostPopularProducts() {
@@ -39,7 +42,7 @@ type ProductGridSectionProps = {
 };
 
 // This component should render a grid of products
-async function ProductGridSection({ title, productsFetcher }: ProductGridSectionProps) {
+function ProductGridSection({ title, productsFetcher }: ProductGridSectionProps) {
 	return (
 		<div className="space-y-4">
 			<div className="flex gap-4">
@@ -52,10 +55,22 @@ async function ProductGridSection({ title, productsFetcher }: ProductGridSection
 				</Button>
 			</div>
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-				{(await productsFetcher()).map((product) => (
-					<ProductCard key={product.id} {...product} />
-				))}
+				<Suspense
+					fallback={
+						<>
+							<ProductCardSkeleton />
+							<ProductCardSkeleton />
+						</>
+					}
+				>
+					<ProductSuspense productsFetcher={productsFetcher} />
+				</Suspense>
 			</div>
 		</div>
 	);
+}
+
+// add suspense to the ProductGridSection component to handle loading states
+async function ProductSuspense({ productsFetcher }: { productsFetcher: () => Promise<Product[]> }) {
+	return (await productsFetcher()).map((product) => <ProductCard key={product.id} {...product} />);
 }
