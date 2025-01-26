@@ -1,3 +1,4 @@
+'use server';
 import db from '@/db/db';
 import { notFound } from 'next/navigation';
 import Stripe from 'stripe';
