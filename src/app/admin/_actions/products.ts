@@ -4,6 +4,7 @@ import db from '@/db/db';
 import { z } from 'zod';
 import fs from 'fs/promises';
 import { notFound, redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 // create schemas for file & image
 const fileSchema = z.instanceof(File, { message: 'Required' });
@@ -51,6 +52,10 @@ export async function AddProduct(prevState: unknown, formData: FormData) {
 		},
 	});
 
+	// revalidate paths
+	revalidatePath('/');
+	revalidatePath('/products');
+
 	redirect('/admin/products');
 }
 
@@ -62,6 +67,10 @@ export async function toggleProductAvailability(id: string, isAvailableForPurcha
 			isAvailableForPurchase,
 		},
 	});
+
+	// revalidate paths
+	revalidatePath('/');
+	revalidatePath('/products');
 }
 
 // delete procduct func
@@ -74,6 +83,10 @@ export async function deleteProduct(id: string) {
 
 	await fs.unlink(product.filePath);
 	await fs.unlink(`public${product.imagePath}`);
+
+	// revalidate paths
+	revalidatePath('/');
+	revalidatePath('/products');
 }
 
 // add edit schema
@@ -132,6 +145,10 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
 			imagePath,
 		},
 	});
+
+	// revalidate paths
+	revalidatePath('/');
+	revalidatePath('/products');
 
 	redirect('/admin/products');
 }

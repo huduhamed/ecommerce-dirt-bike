@@ -7,24 +7,29 @@ import { ProductCard, ProductCardSkeleton } from '../../components/ProductCard';
 import { Button } from '@/components/ui/button';
 import { Product } from '@prisma/client';
 import db from '@/db/db';
+import { cache } from '@/lib/cache';
 
-// This function should return the 5 most popular products
-function getMostPopularProducts() {
-	return db.product.findMany({
-		where: { isAvailableForPurchase: true },
-		orderBy: { orders: { _count: 'desc' } },
-		take: 5,
-	});
-}
+// This function should return the 5 most popular products, is cached for 24hrs
+const getMostPopularProducts = cache(
+	() => {
+		return db.product.findMany({
+			where: { isAvailableForPurchase: true },
+			orderBy: { orders: { _count: 'desc' } },
+			take: 5,
+		});
+	},
+	['/', 'getMostPopularProducts'],
+	{ revalidate: 60 * 60 * 24 }
+);
 
-// This function should return the 5 newest products
-function getNewestProducts() {
+// This function should return the 5 newest products, is cached
+const getNewestProducts = cache(() => {
 	return db.product.findMany({
 		where: { isAvailableForPurchase: true },
 		orderBy: { createdAt: 'desc' },
 		take: 5,
 	});
-}
+}, ['/', 'getNewestProducts']);
 
 // This component should render the home page
 export default function HomePage() {
