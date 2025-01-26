@@ -19,11 +19,12 @@ type ProductCardProps = {
 	imagePath: string;
 };
 
+// renders a product card
 export function ProductCard({ id, name, priceInCents, description, imagePath }: ProductCardProps) {
 	return (
 		<Card className="flex flex-col overflow-hidden">
 			<div className="w-full h-auto relative aspect-video">
-				<Image src={imagePath} alt="name" fill />
+				<Image src={imagePath} alt="name" fill objectFit="contain" />
 			</div>
 			<CardHeader>
 				<CardTitle>{name}</CardTitle>
@@ -41,6 +42,7 @@ export function ProductCard({ id, name, priceInCents, description, imagePath }: 
 	);
 }
 
+// renders a product card skeleton
 export function ProductCardSkeleton() {
 	return (
 		<Card className="flex flex-col overflow-hidden animate-pulse">
