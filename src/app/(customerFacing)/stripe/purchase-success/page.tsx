@@ -11,13 +11,13 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 // page for thank you message for the purchase
-export default async function PurchaseSuccessPage({
+export default async function SuccessPage({
 	searchParams,
 }: {
 	searchParams: { payment_intent: string };
 }) {
 	// ensure searchParams.payment_intent exists
-	const paymentIntentId = await searchParams.payment_intent;
+	const paymentIntentId = searchParams.payment_intent;
 	if (!paymentIntentId) {
 		return notFound();
 	}
