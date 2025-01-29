@@ -1,3 +1,4 @@
+'use server';
 import { Button } from '@/components/ui/button';
 import db from '@/db/db';
 import { formatCurrency } from '@/lib/formatters';
@@ -15,6 +16,12 @@ export default async function PurchaseSuccessPage({
 }: {
 	searchParams: { payment_intent: string };
 }) {
+	// ensure searchParams.payment_intent exists
+	const paymentIntentId = await searchParams.payment_intent;
+	if (!paymentIntentId) {
+		return notFound();
+	}
+
 	// retrieve payment intent
 	const paymentIntent = await stripe.paymentIntents.retrieve(searchParams.payment_intent);
 
