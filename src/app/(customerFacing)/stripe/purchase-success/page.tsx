@@ -14,19 +14,22 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 export default async function SuccessPage({
 	searchParams,
 }: {
-	searchParams: { payment_intent: string };
+	searchParams: { payment_intent?: string };
 }) {
-	// ensure searchParams.payment_intent exists
-	const paymentIntentId = searchParams.payment_intent;
+	// await searchParams
+	const searchParamsResolved = await searchParams;
+
+	const paymentIntentId = await searchParamsResolved.payment_intent;
+
 	if (!paymentIntentId) {
 		return notFound();
 	}
 
 	// retrieve payment intent
-	const paymentIntent = await stripe.paymentIntents.retrieve(searchParams.payment_intent);
+	const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
 	// if payment intent is null, return 404
-	if (paymentIntent.metadata.productId == null) return notFound();
+	if (paymentIntent?.metadata?.productId == null) return notFound();
 
 	// retrieve product by id
 	const product = await db.product.findUnique({ where: { id: paymentIntent.metadata.productId } });
