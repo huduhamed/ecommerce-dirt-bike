@@ -50,7 +50,7 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
 					<div className="text-muted-foreground line-clamp-3">{product.description}</div>
 				</div>
 			</div>
-			<Elements stripe={stripePromise} options={{ clientSecret }}>
+			<Elements options={{ clientSecret }} stripe={stripePromise}>
 				<Form priceInCents={product.priceInCents} productId={product.id} />
 			</Elements>
 		</div>
