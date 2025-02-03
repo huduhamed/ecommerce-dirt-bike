@@ -11,7 +11,11 @@ type OrderInformationProps = {
 const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium' });
 
 // orderinfo component, react email
-export function OrderInfomation({ order, product, downloadVerificationId }: OrderInformationProps) {
+export function OrderInformation({
+	order,
+	product,
+	downloadVerificationId,
+}: OrderInformationProps) {
 	return (
 		<>
 			<Section>
@@ -32,9 +36,13 @@ export function OrderInfomation({ order, product, downloadVerificationId }: Orde
 			</Section>
 			<Section className="border border-solid border-gray-500 my-4 md:p-6 p-4 rounded-lg">
 				<Img
-					src={`${process.env.NEXT_PUBLIC_SERVER_URL}${product.imagePath}`}
 					alt={product.name}
 					width="100%"
+					src={
+						process.env.NEXT_PUBLIC_SERVER_URL
+							? `${process.env.NEXT_PUBLIC_SERVER_URL}${product.imagePath}`
+							: product.imagePath // Fallback to absolute path if needed
+					}
 				/>
 			</Section>
 		</>
