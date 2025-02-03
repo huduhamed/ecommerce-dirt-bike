@@ -2,7 +2,7 @@ import db from '@/db/db';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
-import { PurchaseReceiptEmail } from '@/email/PurchaseReceipt';
+import PurchaseReceiptEmail from '@/email/PurchaseReceipt';
 
 // create a new instance of the Stripe client
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
