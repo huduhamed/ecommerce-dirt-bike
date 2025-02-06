@@ -17,6 +17,7 @@ import {
 import { MoreVertical } from 'lucide-react';
 import { DeleteDropdownItem } from './_components/OrderActions';
 
+// get orders
 function getOrders() {
 	return db.order.findMany({
 		select: {
@@ -29,6 +30,7 @@ function getOrders() {
 	});
 }
 
+// order page, admin facing
 export default function OrdersPage() {
 	return (
 		<>
@@ -38,6 +40,7 @@ export default function OrdersPage() {
 	);
 }
 
+// render orders
 async function OrdersTable() {
 	const orders = await getOrders();
 

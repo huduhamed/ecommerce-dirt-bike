@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ActiveToggleDropdownItem, DeleteDropdownItem } from './_components/ProductActions';
 
+// admin product page
 export default function AdminProductsPage() {
 	return (
 		<>
@@ -35,6 +36,7 @@ export default function AdminProductsPage() {
 	);
 }
 
+// dynamically render product
 async function ProductsTable() {
 	const products = await db.product.findMany({
 		select: {

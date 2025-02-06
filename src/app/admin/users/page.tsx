@@ -17,6 +17,7 @@ import {
 import { MoreVertical } from 'lucide-react';
 import { DeleteDropdownItem } from './_components/UserActions';
 
+// get user actions
 function getUsers() {
 	return db.user.findMany({
 		select: {
@@ -28,6 +29,7 @@ function getUsers() {
 	});
 }
 
+// render users/customer page
 export default function UsersPage() {
 	return (
 		<>
