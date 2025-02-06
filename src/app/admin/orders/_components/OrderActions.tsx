@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { DeleteOrder } from '../../_actions/orders';
 
+// delete dropdown action
 export function DeleteDropdownItem({ id }: { id: string }) {
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();

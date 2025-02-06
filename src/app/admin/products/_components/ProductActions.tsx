@@ -4,6 +4,7 @@ import { deleteProduct, toggleProductAvailability } from '../../_actions/product
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 
+// toggle item
 export function ActiveToggleDropdownItem({
 	id,
 	isAvailableforPurchase,
@@ -29,6 +30,7 @@ export function ActiveToggleDropdownItem({
 	);
 }
 
+// delete dropdown item
 export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boolean }) {
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();

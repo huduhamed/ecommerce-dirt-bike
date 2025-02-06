@@ -11,10 +11,11 @@ import { useFormStatus } from 'react-dom';
 import { Product } from '@prisma/client';
 import Image from 'next/image';
 
+// product form
 export function ProductForm({ product }: { product?: Product | null }) {
 	const [error, action] = useActionState(
 		product == null ? AddProduct : updateProduct.bind(null, product.id),
-		{}
+		{},
 	);
 	const [priceInCents, setPriceInCents] = useState<number | undefined>(product?.priceInCents);
 
@@ -67,6 +68,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
 	);
 }
 
+// submit button
 function SubmitButton() {
 	const { pending } = useFormStatus();
 
